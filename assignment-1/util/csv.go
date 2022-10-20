@@ -6,20 +6,7 @@ import (
 )
 
 type Member struct {
-	Nama, VoucherCode, Batch string
-}
-
-func createMembers(data [][]string) []Member {
-	var members []Member
-	// skip the first row because it's the header
-	for _, row := range data[1:] {
-		members = append(members, Member{
-			Nama:        row[0],
-			VoucherCode: row[1],
-			Batch:       row[2],
-		})
-	}
-	return members
+	Name, VoucherCode, Batch string
 }
 
 func LoadMembers(filename string) ([]Member, error) {
@@ -39,21 +26,24 @@ func LoadMembers(filename string) ([]Member, error) {
 	return members, nil
 }
 
+func createMembers(data [][]string) []Member {
+	members := make([]Member, 0, len(data))
+	for _, row := range data[1:] {
+		members = append(members, Member{
+			Name:        row[0],
+			VoucherCode: row[1],
+			Batch:       row[2],
+		})
+	}
+	return members
+}
+
 type FilterFunc func(Member) bool
 
-// 604 - 543 = 61
-
-func FilterMembers(members []Member, mustFilters []FilterFunc) []Member {
+func FilterMembers(members []Member, filters FilterFunc) []Member {
 	var filteredMembers []Member
 	for _, v := range members {
-		status := true
-		for _, filter := range mustFilters {
-			if !filter(v) {
-				status = false
-				break
-			}
-		}
-		if status {
+		if filters(v) {
 			filteredMembers = append(filteredMembers, v)
 		}
 	}

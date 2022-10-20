@@ -66,18 +66,17 @@ func init() {
 		log.Fatal(err)
 	}
 
-	filters := make([]util.FilterFunc, 0)
-	filters = append(filters, func(m util.Member) bool {
-		return m.Batch == "10" && m.Nama != "SAMMI ALDHI YANTO"
-	})
+	filter := func(m util.Member) bool {
+		return m.Batch == "10" && m.Name != "SAMMI ALDHI YANTO"
+	}
 
-	filteredMembers := util.FilterMembers(members, filters)
+	filteredMembers := util.FilterMembers(members, filter)
 
 	var no uint8 = 2
 	for _, v := range filteredMembers {
 		friendsData.friends[no] = friend{
 			No:      no,
-			Name:    v.Nama,
+			Name:    v.Name,
 			Address: "-",
 			Job:     "-",
 			Reason:  "-",
